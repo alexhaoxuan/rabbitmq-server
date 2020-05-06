@@ -1,0 +1,6 @@
+      # vim:sw=2:et:
+      - name: CHECK SCRIPTS
+        run: |
+          make bats \
+            base_rmq_ref=$(base_rmq_ref) \
+            current_rmq_ref=${{ steps.ref.outputs.branch_or_tag_name }}
