@@ -86,7 +86,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: umbrellas
-          key: git-${{ github.sha }}_secondary_umbrellas
+          key: secondary_umbrellas-v3.7.x-v3.8.3-erlang-21.3
       # vim:sw=2:et:
       - name: CHECK SCRIPTS
         run: |
