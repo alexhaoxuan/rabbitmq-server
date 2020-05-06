@@ -53,12 +53,6 @@ jobs:
       - name: COMPILE FOR TEST
         run: |
           make test-build base_rmq_ref=master current_rmq_ref=${{ steps.ref.outputs.branch_or_tag_name }}
-      - name: CLONE SECONDARY UMBRELLA
-        if: success() && 'oldest' == 'oldest'
-        uses: actions/checkout@v2
-        with:
-          repository: rabbitmq/rabbitmq-public-umbrella
-          path: umbrellas/master
       - name: CACHE SECONDARY UMBRELLAS
         if: success() && 'oldest' == 'oldest'
         uses: actions/cache@v1
@@ -69,8 +63,12 @@ jobs:
         if: success() && 'oldest' == 'oldest'
         run: |
           set -x
-          if ! test -f umbrellas/ready; then
+          if ! test -f umbrellas/.ready; then
             git config --global advice.detachedHead false
+            mkdir -p umbrellas
+            git clone \
+              https://github.com/rabbitmq/rabbitmq-public-umbrella.git \
+              umbrellas/master
             make -C umbrellas/master co # To get RabbitMQ components.
             for version in v3.7.x v3.8.3; do
               umbrella="umbrellas/$version"
@@ -88,7 +86,7 @@ jobs:
               rm -fr "$umbrella"/deps/*/{.git,test} "$umbrella"/.git
             done
             rm -fr umbrellas/master
-            touch umbrellas/ready
+            touch umbrellas/.ready
           fi
       # vim:sw=2:et:
       - name: CHECK SCRIPTS
